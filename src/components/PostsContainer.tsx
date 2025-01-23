@@ -124,17 +124,21 @@ export const UserFeed = ({
 
   return (
     <AnimatePresence mode="popLayout" initial={false}>
-      {posts.map((post) => (
-        <motion.div
-          key={post.id}
-          initial={{ opacity: 0, y: -20, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.95 }}
-          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        >
-          <Post post={post} currentUserId={currentUserId} onDelete={handleDelete} />
-        </motion.div>
-      ))}
+      {posts.length > 0 ? (
+        posts.map((post) => (
+          <motion.div
+            key={post.id}
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+          >
+            <Post post={post} currentUserId={currentUserId} onDelete={handleDelete} />
+          </motion.div>
+        ))
+      ) : (
+        <div>No posts</div>
+      )}
     </AnimatePresence>
   );
 };

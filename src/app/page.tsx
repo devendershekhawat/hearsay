@@ -45,16 +45,12 @@ export default async function Home() {
             <TabsTrigger value="discover">Discover</TabsTrigger>
           </TabsList>
           <TabsContent value="feed">
-            {initialPostsForFollowing && initialPostsForFollowing.length > 0 ? (
-              <UserFeed
-                initialPosts={(initialPostsForFollowing as PostWithProfile[]) || []}
-                currentUserId={profileData.user_id}
-                feedType="following"
-                key="user-feed"
-              />
-            ) : (
-              <NoFollowingProfiles />
-            )}
+            <UserFeed
+              initialPosts={(initialPostsForFollowing as PostWithProfile[]) || []}
+              currentUserId={profileData.user_id}
+              feedType="following"
+              key="user-feed"
+            />
           </TabsContent>
           <TabsContent value="discover">
             <UserFeed
