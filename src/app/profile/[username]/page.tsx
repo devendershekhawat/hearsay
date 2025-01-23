@@ -10,6 +10,12 @@ import { Separator } from '@/components/ui/separator';
 import { createClient } from '@/utils/supabase/server';
 import Image from 'next/image';
 import Link from 'next/link';
+
+export const metadata = {
+  title: 'Profile | hearsay',
+  description: 'View your profile and see posts from the people you follow.',
+};
+
 export default async function ProfilePage({ params }: { params: Promise<{ username: string }> }) {
   const username = (await params).username;
   const { data: profile, error: profileError } = await getProfileByUsername(username);

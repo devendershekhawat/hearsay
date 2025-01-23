@@ -11,6 +11,11 @@ import { Suspense } from 'react';
 import { ProfileCard } from '@/components/ProfileCard';
 import { NoFollowingProfiles } from '@/components/NoFollowingProfiles';
 
+export const metadata = {
+  title: 'People | hearsay',
+  description: 'Discover and connect with new people on hearsay.',
+};
+
 export default async function PeoplePage({
   searchParams,
 }: {

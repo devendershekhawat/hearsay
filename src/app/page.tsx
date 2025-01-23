@@ -8,6 +8,11 @@ import { FindPeople } from '@/components/FindPeople';
 import { PostWithProfile } from '@/components/Post';
 import { NoFollowingProfiles } from '@/components/NoFollowingProfiles';
 
+export const metadata = {
+  title: 'Home | hearsay',
+  description: 'Your social media feed - see posts from people you follow and discover new connections.',
+};
+
 export default async function Home() {
   // Fetch data in parallel using Promise.all
   const [profileResult, postsResultForFollowing, postsResultForDiscover] = await Promise.all([
