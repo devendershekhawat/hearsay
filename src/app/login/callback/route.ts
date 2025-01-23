@@ -25,5 +25,8 @@ export async function GET(request: Request) {
   const baseUrl = forwardedHost ? `https://${forwardedHost}` : origin;
   const redirectPath = next;
 
+  console.log('baseUrl', baseUrl);
+  console.log('redirectPath', redirectPath);
+
   return NextResponse.redirect(`${baseUrl}${redirectPath}`);
 }

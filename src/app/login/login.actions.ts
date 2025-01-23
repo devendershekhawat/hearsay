@@ -26,8 +26,6 @@ export async function signInWithGoogle() {
     throw new Error('Failed to sign in with Google');
   }
 
-  console.log(data);
-
   redirect(data.url);
 }
 
