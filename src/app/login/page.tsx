@@ -7,12 +7,36 @@ import { Switch } from '@/components/ui/switch';
 import { useTheme } from 'next-themes';
 import { FaGithub, FaGoogle } from 'react-icons/fa';
 import { signInWithGithub, signInWithGoogle } from './login.actions';
+import { useState, useEffect } from 'react';
 
 export default function Login() {
   const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleSignInWithGoogle = async () => {
     await signInWithGoogle();
+  };
+
+  // Prevent hydration mismatch by not rendering theme switch until client-side
+  const renderThemeSwitch = () => {
+    if (!mounted) return null;
+
+    return (
+      <div className="flex items-center gap-2">
+        <Switch
+          id="theme-switch"
+          checked={theme === 'dark'}
+          onCheckedChange={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+        />
+        <Label className="tinos-regular text-md" htmlFor="theme-switch">
+          {theme === 'dark' ? 'Eyes saved' : 'Save eyes'}
+        </Label>
+      </div>
+    );
   };
 
   return (
@@ -37,18 +61,7 @@ export default function Login() {
             </Button>
           </div>
         </CardContent>
-        <CardFooter>
-          <div className="flex items-center gap-2">
-            <Switch
-              id="theme-switch"
-              checked={theme === 'dark'}
-              onCheckedChange={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            />
-            <Label className="tinos-regular text-md" htmlFor="theme-switch">
-              {theme === 'dark' ? 'Eyes saved' : 'Save eyes'}
-            </Label>
-          </div>
-        </CardFooter>
+        <CardFooter>{renderThemeSwitch()}</CardFooter>
       </Card>
     </main>
   );
