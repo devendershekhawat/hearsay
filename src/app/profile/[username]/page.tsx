@@ -1,0 +1,73 @@
+import { getMyConnectionWithProfile } from '@/app/actions/people';
+import { deletePost, getPostsByProfileId } from '@/app/actions/posts';
+import { getProfileByUsername, isProfileOfCurrentUser } from '@/app/actions/profile';
+import { FollowButton } from '@/components/FollowButton';
+import Post from '@/components/Post';
+import { UserFeed } from '@/components/PostsContainer';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { createClient } from '@/utils/supabase/server';
+import Image from 'next/image';
+import Link from 'next/link';
+export default async function ProfilePage({ params }: { params: Promise<{ username: string }> }) {
+  const username = (await params).username;
+  const { data: profile, error: profileError } = await getProfileByUsername(username);
+
+  if (!profile || profileError) {
+    return <div>Profile not found</div>;
+  }
+
+  const isCurrentUser = await isProfileOfCurrentUser(profile);
+
+  const { userIsFollowingMe, IamFollowingUser, error: connectionError } = await getMyConnectionWithProfile(
+    profile.user_id,
+  );
+
+  if (connectionError) {
+    return <div>Error getting user connection</div>;
+  }
+
+  const { data: posts, error: postsError } = await getPostsByProfileId(profile.user_id);
+
+  if (postsError || !posts) {
+    return <div>Error getting posts</div>;
+  }
+
+  return (
+    <main className="w-full max-w-2xl mx-auto pt-10">
+      <div className="flex flex-col items-center justify-center gap-4 mb-10">
+        <div className="w-40 h-40 rounded-full overflow-hidden relative border-4 dark:border-white border-gray-800">
+          <Image
+            src={profile.photo_url || 'https://i.sstatic.net/l60Hf.png'}
+            alt={profile.username}
+            fill
+            className="object-cover"
+          />
+        </div>
+        <div className="flex flex-col items-center justify-center gap-2">
+          <h1 className="text-2xl font-bold">
+            {profile.first_name} {profile.last_name}
+          </h1>
+          <p className="text-sm text-muted-foreground text-center">@{profile.username}</p>
+          {!isCurrentUser && userIsFollowingMe && <Badge variant="secondary">follows you</Badge>}
+        </div>
+        {profile.bio && <p className="text-md">{profile.bio}</p>}
+        {isCurrentUser ? (
+          <Button size="sm">
+            <Link href={`/profile/update`}>Edit profile</Link>
+          </Button>
+        ) : (
+          <FollowButton profileId={profile.user_id} amIFollowingUser={IamFollowingUser || false} />
+        )}
+      </div>
+      <p className="text-sm font-bold text-muted-foreground">Posts</p>
+      <Separator className="my-4" />
+      <UserFeed
+        initialPosts={posts.map((post) => ({ ...post, profile: { ...profile, am_i_following: false } }))}
+        currentUserId={profile.user_id}
+        feedType="profile"
+      />
+    </main>
+  );
+}
