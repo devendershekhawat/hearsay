@@ -1,7 +1,6 @@
 import { Database } from '@/database.types'
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
-import { CookieOptions } from 'next/server'
 
 export async function updateSession(request: NextRequest) {
   // Skip middleware for public routes and static files
@@ -24,14 +23,14 @@ export async function updateSession(request: NextRequest) {
         get(name: string) {
           return request.cookies.get(name)?.value
         },
-        set(name: string, value: string, options: CookieOptions) {
+        set(name: string, value: string, options: any) {
           response.cookies.set({
             name,
             value,
             ...options,
           })
         },
-        remove(name: string, options: CookieOptions) {
+        remove(name: string, options: any) {
           response.cookies.set({
             name,
             value: '',
