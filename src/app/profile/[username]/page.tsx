@@ -69,11 +69,15 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
       </div>
       <p className="text-sm font-bold text-muted-foreground">Posts</p>
       <Separator className="my-4" />
-      <UserFeed
-        initialPosts={posts.map((post) => ({ ...post, profile: { ...profile, am_i_following: false } }))}
-        currentUserId={profile.user_id}
-        feedType="profile"
-      />
+      {posts.length > 0 ? (
+        <UserFeed
+          initialPosts={posts.map((post) => ({ ...post, profile: { ...profile, am_i_following: false } }))}
+          currentUserId={profile.user_id}
+          feedType="profile"
+        />
+      ) : (
+        <p className="text-sm text-muted-foreground">No posts yet</p>
+      )}
     </main>
   );
 }

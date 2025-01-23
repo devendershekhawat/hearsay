@@ -5,6 +5,11 @@ import { Database } from '@/database.types';
 type ProfileInsert = Database['public']['Tables']['Profile']['Insert'];
 type ProfileRow = Database['public']['Tables']['Profile']['Row'];
 
+export const metadata = {
+  title: 'Update Profile | hearsay',
+  description: 'Update your profile on hearsay.',
+};
+
 export default async function ProfileCreatePage() {
   const supabase = await createClient();
   const { data: userData, error: userError } = await supabase.auth.getUser();
