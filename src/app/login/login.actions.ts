@@ -2,13 +2,21 @@
 
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
+import { headers } from 'next/headers';
+
+async function getURL() {
+  const headersList = headers();
+  const host = (await headersList).get('host');
+  const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
+  return `${protocol}://${host}`;
+}
 
 export async function signInWithGoogle() {
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/login/callback`,
+      redirectTo: `${getURL()}/login/callback`,
     },
   });
 
@@ -25,7 +33,7 @@ export const signInWithGithub = async () => {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'github',
     options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/login/callback`,
+      redirectTo: `${getURL()}/login/callback`,
     },
   });
 

@@ -11,33 +11,33 @@ import { useState, useEffect } from 'react';
 
 export default function Login() {
   const { theme, setTheme } = useTheme();
-  // const [mounted, setMounted] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
-  // useEffect(() => {
-  //   setMounted(true);
-  // }, []);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleSignInWithGoogle = async () => {
     await signInWithGoogle();
   };
 
   // Prevent hydration mismatch by not rendering theme switch until client-side
-  // const renderThemeSwitch = () => {
-  //   if (!mounted) return null;
+  const renderThemeSwitch = () => {
+    if (!mounted) return null;
 
-  //   return (
-  //     <div className="flex items-center gap-2">
-  //       <Switch
-  //         id="theme-switch"
-  //         checked={theme === 'dark'}
-  //         onCheckedChange={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-  //       />
-  //       <Label className="tinos-regular text-md" htmlFor="theme-switch">
-  //         {theme === 'dark' ? 'Eyes saved' : 'Save eyes'}
-  //       </Label>
-  //     </div>
-  //   );
-  // };
+    return (
+      <div className="flex items-center gap-2">
+        <Switch
+          id="theme-switch"
+          checked={theme === 'dark'}
+          onCheckedChange={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+        />
+        <Label className="tinos-regular text-md" htmlFor="theme-switch">
+          {theme === 'dark' ? 'Eyes saved' : 'Save eyes'}
+        </Label>
+      </div>
+    );
+  };
 
   return (
     <main className="flex flex-col items-center justify-center h-screen px-4 gap-8">
@@ -61,7 +61,7 @@ export default function Login() {
             </Button>
           </div>
         </CardContent>
-        {/* <CardFooter>{renderThemeSwitch()}</CardFooter> */}
+        <CardFooter>{renderThemeSwitch()}</CardFooter>
       </Card>
     </main>
   );
