@@ -37,15 +37,13 @@ export function AppSidebar({ profile }: { profile: Database['public']['Tables'][
   const renderThemeSwitch = () => {
     if (!mounted) return null;
 
+    const isDark = theme === 'dark' || (!mounted && document.documentElement.classList.contains('dark'));
+
     return (
       <div className="flex items-center justify-center w-full gap-2">
-        <Switch
-          id="theme-switch"
-          checked={theme === 'dark'}
-          onCheckedChange={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-        />
+        <Switch id="theme-switch" checked={isDark} onCheckedChange={() => setTheme(isDark ? 'light' : 'dark')} />
         <Label className="tinos-regular text-md" htmlFor="theme-switch">
-          {theme === 'dark' ? 'Eyes saved' : 'Save eyes'}
+          {isDark ? 'Eyes saved' : 'Save eyes'}
         </Label>
       </div>
     );

@@ -49,14 +49,21 @@ export function LoginCard() {
         <div className="flex items-center gap-2">
           {mounted && (
             <>
-              <Switch
-                id="theme-switch"
-                checked={theme === 'dark'}
-                onCheckedChange={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              />
-              <Label className="tinos-regular text-md" htmlFor="theme-switch">
-                {theme === 'dark' ? 'Eyes saved' : 'Save eyes'}
-              </Label>
+              {(() => {
+                const isDark = theme === 'dark' || (!mounted && document.documentElement.classList.contains('dark'));
+                return (
+                  <>
+                    <Switch
+                      id="theme-switch"
+                      checked={isDark}
+                      onCheckedChange={() => setTheme(isDark ? 'light' : 'dark')}
+                    />
+                    <Label className="tinos-regular text-md" htmlFor="theme-switch">
+                      {isDark ? 'Eyes saved' : 'Save eyes'}
+                    </Label>
+                  </>
+                );
+              })()}
             </>
           )}
         </div>
