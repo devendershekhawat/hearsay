@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from 'next-themes';
 import { createClient } from '@/utils/supabase/server';
-import { SidebarProvider } from '@/components/ui/sidebar';
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/ui/app-sidebar';
 import { Toaster } from '@/components/ui/toaster';
 
@@ -51,7 +51,10 @@ export default async function RootLayout({
           {isAuthenticated ? (
             <SidebarProvider>
               {profile && <AppSidebar profile={profile} />}
-              <main className="w-full">{children}</main>
+              <main className="w-full">
+                {profile && <SidebarTrigger />}
+                {children}
+              </main>
             </SidebarProvider>
           ) : (
             children
