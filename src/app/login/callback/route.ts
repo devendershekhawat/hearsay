@@ -22,7 +22,7 @@ export async function GET(request: Request) {
   }
 
   const forwardedHost = request.headers.get('x-forwarded-host');
-  const baseUrl = process.env.NODE_ENV === 'development' ? origin : `https://${forwardedHost || origin}`;
+  const baseUrl = forwardedHost ? `https://${forwardedHost}` : origin;
   const redirectPath = next;
 
   return NextResponse.redirect(`${baseUrl}${redirectPath}`);
