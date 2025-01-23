@@ -11,10 +11,22 @@ import { createClient } from '@/utils/supabase/server';
 import Image from 'next/image';
 import Link from 'next/link';
 
-export const metadata = {
-  title: 'Profile | hearsay',
-  description: 'View your profile and see posts from the people you follow.',
-};
+export async function generateMetadata({ params }: { params: Promise<{ username: string }> }) {
+  const username = (await params).username;
+  const { data: profile } = await getProfileByUsername(username);
+
+  if (!profile) {
+    return {
+      title: 'Profile Not Found | hearsay',
+      description: 'This profile could not be found.',
+    };
+  }
+
+  return {
+    title: `${profile.first_name} ${profile.last_name} (@${profile.username}) | hearsay`,
+    description: profile.bio || `View ${profile.first_name}'s profile and posts on hearsay.`,
+  };
+}
 
 export default async function ProfilePage({ params }: { params: Promise<{ username: string }> }) {
   const username = (await params).username;
