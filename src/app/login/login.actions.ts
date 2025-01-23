@@ -13,10 +13,11 @@ async function getURL() {
 
 export async function signInWithGoogle() {
   const supabase = await createClient();
+  const url = await getURL();
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: `${getURL()}/login/callback`,
+      redirectTo: `${url}/login/callback`,
     },
   });
 
@@ -25,15 +26,18 @@ export async function signInWithGoogle() {
     throw new Error('Failed to sign in with Google');
   }
 
+  console.log(data);
+
   redirect(data.url);
 }
 
 export const signInWithGithub = async () => {
   const supabase = await createClient();
+  const url = await getURL();
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'github',
     options: {
-      redirectTo: `${getURL()}/login/callback`,
+      redirectTo: `${url}/login/callback`,
     },
   });
 
