@@ -8,11 +8,6 @@ import { useTheme } from 'next-themes';
 import { FaGithub, FaGoogle } from 'react-icons/fa';
 import { signInWithGithub, signInWithGoogle } from './login.actions';
 
-export const metadata = {
-  title: 'Login | hearsay',
-  description: 'Login to hearsay.',
-};
-
 export default function Login() {
   const { theme, setTheme } = useTheme();
 
