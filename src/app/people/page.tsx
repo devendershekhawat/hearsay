@@ -8,49 +8,8 @@ import { Database } from '@/database.types';
 import { FindPeople } from '@/components/FindPeople';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
-
-const ProfileCard = ({
-  profile,
-  amIFollowingUser,
-}: {
-  profile: Database['public']['Tables']['Profile']['Row'];
-  amIFollowingUser: boolean;
-}) => {
-  console.log('profile', profile, amIFollowingUser);
-  return (
-    <div key={profile.user_id} className="flex justify-between py-2">
-      <ProfileHoverCard profile={{ ...profile, am_i_following: amIFollowingUser }} isCurrentUser={false}>
-        <Link href={`/profile/${profile.username}`} className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-gray-200 relative overflow-hidden">
-            <Image src={profile.photo_url!} alt={profile.username} fill className="object-cover" />
-          </div>
-          <div>
-            <div className="font-medium">
-              {profile.first_name} {profile.last_name}
-            </div>
-            <div className="text-sm text-gray-500">@{profile.username}</div>
-          </div>
-        </Link>
-      </ProfileHoverCard>
-      <FollowButton profileId={profile.user_id} amIFollowingUser={amIFollowingUser} />
-    </div>
-  );
-};
-
-export const NoFollowingProfiles = () => {
-  return (
-    <div className="text-center py-8">
-      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">No profiles followed yet</h3>
-      <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">Start by discovering interesting people to follow</p>
-      <Link
-        href="/people?type=discover"
-        className="mt-4 inline-block px-4 py-2 rounded-md bg-black text-white dark:bg-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors"
-      >
-        Discover People
-      </Link>
-    </div>
-  );
-};
+import { ProfileCard } from '@/components/ProfileCard';
+import { NoFollowingProfiles } from '@/components/NoFollowingProfiles';
 
 export default async function PeoplePage({
   searchParams,

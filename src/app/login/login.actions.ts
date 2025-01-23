@@ -8,7 +8,7 @@ export async function signInWithGoogle() {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/login/callback`,
+      redirectTo: `${origin}/login/callback`,
     },
   });
 
@@ -25,7 +25,7 @@ export const signInWithGithub = async () => {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'github',
     options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/login/callback`,
+      redirectTo: `${origin}/login/callback`,
     },
   });
 

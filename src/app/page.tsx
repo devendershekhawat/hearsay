@@ -6,7 +6,7 @@ import { getPostsForFeed } from './actions/posts';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { FindPeople } from '@/components/FindPeople';
 import { PostWithProfile } from '@/components/Post';
-import { NoFollowingProfiles } from './people/page';
+import { NoFollowingProfiles } from '@/components/NoFollowingProfiles';
 
 export default async function Home() {
   // Fetch data in parallel using Promise.all
