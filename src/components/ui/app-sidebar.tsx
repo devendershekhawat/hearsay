@@ -49,8 +49,6 @@ export function AppSidebar({ profile }: { profile: Database['public']['Tables'][
     );
   };
 
-  console.log('pathname', pathname);
-
   return (
     <Sidebar>
       <SidebarHeader>
