@@ -6,17 +6,18 @@ import { createClient } from '@/utils/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { PostWithProfile } from './Post';
 import { motion, AnimatePresence } from 'framer-motion';
+import { getPostsForFeed } from '@/app/actions/posts';
+import { Skeleton } from './ui/skeleton';
 
 export const UserFeed = ({
-  initialPosts,
   currentUserId,
   feedType,
 }: {
-  initialPosts: PostWithProfile[];
   currentUserId: string;
   feedType: 'following' | 'discover' | 'profile';
 }) => {
-  const [posts, setPosts] = useState<PostWithProfile[]>(initialPosts);
+  const [posts, setPosts] = useState<PostWithProfile[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const supabase = createClient();
 
@@ -27,6 +28,19 @@ export const UserFeed = ({
   };
 
   useEffect(() => {
+    const fetchPosts = async () => {
+      if (feedType === 'profile') return;
+      const { data, error } = await getPostsForFeed({ feedType });
+      if (error || !data) {
+        toast({ title: 'Error getting posts', description: error || 'Error getting posts', variant: 'destructive' });
+        return;
+      }
+      setPosts(data as PostWithProfile[]);
+      setIsLoading(false);
+    };
+
+    fetchPosts();
+
     const setupRealtimeSubscription = async () => {
       // Get current user
       const {
@@ -120,11 +134,15 @@ export const UserFeed = ({
     setupRealtimeSubscription();
   }, []);
 
-  console.log({ posts, initialPosts });
-
   return (
     <AnimatePresence mode="popLayout" initial={false}>
-      {posts.length > 0 ? (
+      {isLoading ? (
+        <div className="flex flex-col gap-4">
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-10 w-full" />
+        </div>
+      ) : posts.length > 0 ? (
         posts.map((post) => (
           <motion.div
             key={post.id}
