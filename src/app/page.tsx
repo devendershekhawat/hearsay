@@ -15,12 +15,22 @@ export const metadata = {
 
 export default async function Home() {
   // Fetch data in parallel using Promise.all
-  const profileResult = await getCurrentUserProfile();
+  const [profileResult, postsResultForFollowing, postsResultForDiscover] = await Promise.all([
+    getCurrentUserProfile(),
+    getPostsForFeed({ feedType: 'following' }),
+    getPostsForFeed({ feedType: 'discover' }),
+  ]);
 
   const { profileData, profileError } = profileResult;
+  const { data: initialPostsForFollowing, error: initialPostsErrorForFollowing } = postsResultForFollowing;
+  const { data: initialPostsForDiscover, error: initialPostsErrorForDiscover } = postsResultForDiscover;
 
   if (!profileData || profileError) {
     return <div>Error fetching profile data</div>;
+  }
+
+  if (initialPostsErrorForFollowing || initialPostsErrorForDiscover) {
+    return <div>{initialPostsErrorForFollowing || initialPostsErrorForDiscover}</div>;
   }
 
   return (
@@ -35,10 +45,20 @@ export default async function Home() {
             <TabsTrigger value="discover">Discover</TabsTrigger>
           </TabsList>
           <TabsContent value="feed">
-            <UserFeed currentUserId={profileData.user_id} feedType="following" key="user-feed" />
+            <UserFeed
+              initialPosts={(initialPostsForFollowing as PostWithProfile[]) || []}
+              currentUserId={profileData.user_id}
+              feedType="following"
+              key="user-feed"
+            />
           </TabsContent>
           <TabsContent value="discover">
-            <UserFeed currentUserId={profileData.user_id} feedType="discover" key="user-feed" />
+            <UserFeed
+              initialPosts={(initialPostsForDiscover as PostWithProfile[]) || []}
+              currentUserId={profileData.user_id}
+              feedType="discover"
+              key="user-feed"
+            />
           </TabsContent>
         </Tabs>
       </section>

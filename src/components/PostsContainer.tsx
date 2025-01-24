@@ -6,19 +6,17 @@ import { createClient } from '@/utils/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { PostWithProfile } from './Post';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getPostsByProfileId, getPostsForFeed } from '@/app/actions/posts';
-import { Skeleton } from './ui/skeleton';
-import { getCurrentUserProfile } from '@/app/actions/profile';
 
 export const UserFeed = ({
+  initialPosts,
   currentUserId,
   feedType,
 }: {
+  initialPosts: PostWithProfile[];
   currentUserId: string;
   feedType: 'following' | 'discover' | 'profile';
 }) => {
-  const [posts, setPosts] = useState<PostWithProfile[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [posts, setPosts] = useState<PostWithProfile[]>(initialPosts);
 
   const supabase = createClient();
 
@@ -29,44 +27,6 @@ export const UserFeed = ({
   };
 
   useEffect(() => {
-    const fetchPosts = async () => {
-      setIsLoading(true);
-      if (feedType === 'profile') {
-        const { profileData, profileError } = await getCurrentUserProfile();
-        if (profileError || !profileData) {
-          toast({
-            title: 'Error getting profile',
-            description: profileError || 'Error getting profile',
-            variant: 'destructive',
-          });
-          return;
-        }
-        const { data: posts, error: postsError } = await getPostsByProfileId(currentUserId);
-        if (postsError || !posts) {
-          toast({
-            title: 'Error getting posts',
-            description: postsError?.message || 'Error getting posts',
-            variant: 'destructive',
-          });
-          return;
-        }
-        setPosts(
-          posts.map((post) => ({ ...post, profile: { ...profileData, am_i_following: false } })) as PostWithProfile[],
-        );
-        setIsLoading(false);
-        return;
-      }
-      const { data, error } = await getPostsForFeed({ feedType });
-      if (error || !data) {
-        toast({ title: 'Error getting posts', description: error || 'Error getting posts', variant: 'destructive' });
-        return;
-      }
-      setPosts(data as PostWithProfile[]);
-      setIsLoading(false);
-    };
-
-    fetchPosts();
-
     const setupRealtimeSubscription = async () => {
       // Get current user
       const {
@@ -160,15 +120,11 @@ export const UserFeed = ({
     setupRealtimeSubscription();
   }, []);
 
+  console.log({ posts, initialPosts });
+
   return (
     <AnimatePresence mode="popLayout" initial={false}>
-      {isLoading ? (
-        <div className="flex flex-col gap-4">
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-10 w-full" />
-        </div>
-      ) : posts.length > 0 ? (
+      {posts.length > 0 ? (
         posts.map((post) => (
           <motion.div
             key={post.id}

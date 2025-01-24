@@ -46,6 +46,12 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
     return <div>Error getting user connection</div>;
   }
 
+  const { data: posts, error: postsError } = await getPostsByProfileId(profile.user_id);
+
+  if (postsError || !posts) {
+    return <div>Error getting posts</div>;
+  }
+
   return (
     <main className="w-full max-w-2xl mx-auto pt-10">
       <div className="flex flex-col items-center justify-center gap-4 mb-10">
@@ -75,7 +81,11 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
       </div>
       <p className="text-sm font-bold text-muted-foreground">Posts</p>
       <Separator className="my-4" />
-      <UserFeed currentUserId={profile.user_id} feedType="profile" />
+      <UserFeed
+        initialPosts={posts.map((post) => ({ ...post, profile: { ...profile, am_i_following: false } }))}
+        currentUserId={profile.user_id}
+        feedType="profile"
+      />
     </main>
   );
 }
