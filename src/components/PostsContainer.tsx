@@ -6,8 +6,9 @@ import { createClient } from '@/utils/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { PostWithProfile } from './Post';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getPostsForFeed } from '@/app/actions/posts';
+import { getPostsByProfileId, getPostsForFeed } from '@/app/actions/posts';
 import { Skeleton } from './ui/skeleton';
+import { getCurrentUserProfile } from '@/app/actions/profile';
 
 export const UserFeed = ({
   currentUserId,
@@ -29,7 +30,32 @@ export const UserFeed = ({
 
   useEffect(() => {
     const fetchPosts = async () => {
-      if (feedType === 'profile') return;
+      setIsLoading(true);
+      if (feedType === 'profile') {
+        const { profileData, profileError } = await getCurrentUserProfile();
+        if (profileError || !profileData) {
+          toast({
+            title: 'Error getting profile',
+            description: profileError || 'Error getting profile',
+            variant: 'destructive',
+          });
+          return;
+        }
+        const { data: posts, error: postsError } = await getPostsByProfileId(currentUserId);
+        if (postsError || !posts) {
+          toast({
+            title: 'Error getting posts',
+            description: postsError?.message || 'Error getting posts',
+            variant: 'destructive',
+          });
+          return;
+        }
+        setPosts(
+          posts.map((post) => ({ ...post, profile: { ...profileData, am_i_following: false } })) as PostWithProfile[],
+        );
+        setIsLoading(false);
+        return;
+      }
       const { data, error } = await getPostsForFeed({ feedType });
       if (error || !data) {
         toast({ title: 'Error getting posts', description: error || 'Error getting posts', variant: 'destructive' });
